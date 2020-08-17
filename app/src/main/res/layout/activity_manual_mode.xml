@@ -8,7 +8,7 @@
 
 
     <com.example.sudokusolver.Views.ManualSudokuGridView
-        android:id="@+id/mySudokuGridView"
+        android:id="@+id/myManualSudokuGridView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"

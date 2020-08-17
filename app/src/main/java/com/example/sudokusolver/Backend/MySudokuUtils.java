@@ -9,4 +9,18 @@ public class MySudokuUtils {
     // The size of the cell in pixels
     public static int CELL_SIZE;
 
+    /* Returns true, if the cell is in the same row, column or section as the selected cell */
+    public static boolean shouldBeHighlighted(int row, int col, int sRow, int sCol){
+        if( row == sRow ||                                                       // Same row
+            col == sCol ||                                                      // Same col
+            rowColToSectionIndex(row, col) == rowColToSectionIndex(sRow, sCol) // Same section
+        ) return true;
+
+        return false;
+    }
+
+    public static int rowColToSectionIndex(int row, int col) {
+        return (row / SECTION_SIZE) * SECTION_SIZE + (col / SECTION_SIZE);
+    }
+
 }

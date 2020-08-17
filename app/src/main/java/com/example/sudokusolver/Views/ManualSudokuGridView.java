@@ -11,6 +11,9 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.sudokusolver.Backend.MyCords;
+import com.example.sudokusolver.ViewModel.MySudokuViewModel;
+
 import static com.example.sudokusolver.Backend.MySudokuUtils.*;
 
 public class ManualSudokuGridView extends View {
@@ -19,17 +22,19 @@ public class ManualSudokuGridView extends View {
 
     // What to draw, handled by Canvas
     // How to draw, handled by Paint.
-    Paint thinLinePaint, thickLinePaint;
+    Paint thinLinePaint, thickLinePaint, selectedCellPaint, highlightedCellPaint;
+
+
+    MyCords selectedCell = new MyCords(4, 4);
 
     public ManualSudokuGridView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-
-
     @Override
     protected void onDraw(Canvas canvas) {
 
+        highlightCells(canvas);
         drawGrid(canvas);
 
         super.onDraw(canvas);
@@ -37,20 +42,51 @@ public class ManualSudokuGridView extends View {
 
     /* Draws the "skeleton"/grid of the sudoku */
     private void drawGrid(Canvas canvas){
-
         for(int i = 0; i <= SUDOKU_SIZE; i++){
             Paint thisLinePaint = (i % SECTION_SIZE == 0) ? thickLinePaint : thinLinePaint;
             int tempFixedPoint = i*CELL_SIZE;
             canvas.drawLine(0, tempFixedPoint, getMeasuredWidth(), tempFixedPoint, thisLinePaint); // Horizontal line
             canvas.drawLine(tempFixedPoint, 0, tempFixedPoint, getMeasuredHeight(), thisLinePaint); // Vertical lines
         }
+    }
+
+    /* Highlights the cells in same row, column and section */
+    private void highlightCells(Canvas canvas){
+        int sRow = selectedCell.getRow(), sCol = selectedCell.getCol();
+
+        for(int row = 0; row < SUDOKU_SIZE; row++){
+            for(int col = 0; col < SUDOKU_SIZE; col++){
+
+                if( shouldBeHighlighted(row, col, sRow, sCol)){
+                    canvas.drawRect(col*CELL_SIZE, row*CELL_SIZE, (col+1)*CELL_SIZE, (row+1)*CELL_SIZE, highlightedCellPaint);
+                }
+
+            }
+        }
+
+        canvas.drawRect(sCol*CELL_SIZE, sRow*CELL_SIZE, (sCol+1)*CELL_SIZE, (sRow+1)*CELL_SIZE, selectedCellPaint);
+
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        invalidate();
+        if(myCanvasInterfaceListener != null) { // if there is someone listening
+            myCanvasInterfaceListener.onTouchEventOccurred(event.getX(), event.getY());
+        }
         return super.onTouchEvent(event);
+    }
+    myCanvasInterface myCanvasInterfaceListener = null;
+    public void setListener(myCanvasInterface listener){
+        myCanvasInterfaceListener = listener;
+    }
+    public interface myCanvasInterface {
+        void onTouchEventOccurred(float x, float y);
+    }
+
+    public void updateSelectedCellUI(MyCords selectedCell_){
+        selectedCell = selectedCell_;
+        invalidate();
     }
 
     @Override
@@ -75,6 +111,14 @@ public class ManualSudokuGridView extends View {
         thickLinePaint.setColor(Color.BLACK);
         thickLinePaint.setStyle(Paint.Style.STROKE);
         thickLinePaint.setStrokeWidth(12f);
+        // Used for filling the selected cell
+        selectedCellPaint = new Paint();
+        selectedCellPaint.setColor(Color.DKGRAY);
+        selectedCellPaint.setStyle(Paint.Style.FILL);
+        // Used for filling the cells in the same row, column and section as selected cell
+        highlightedCellPaint = new Paint();
+        highlightedCellPaint.setColor(Color.GRAY);
+        highlightedCellPaint.setStyle(Paint.Style.FILL);
     }
 
 }
