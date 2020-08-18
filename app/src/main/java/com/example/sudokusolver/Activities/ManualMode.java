@@ -29,6 +29,7 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
 
     // Input Buttons, used for giving value to a cell + delete button
     Button[] inputButtons = new Button[SUDOKU_SIZE + 1];
+    Button solveBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,5 +91,13 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
                 }
             });
         }
+
+        solveBtn = findViewById(R.id.solveBtn);
+        solveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mySudokuViewModel.solveAndUpdate();
+            }
+        });
     }
 }

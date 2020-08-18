@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.sudokusolver.Backend.MyCords;
+import com.example.sudokusolver.Backend.SudokuSolver;
 
 import static com.example.sudokusolver.Backend.MySudokuUtils.*;
 
@@ -16,7 +17,7 @@ public class MySudokuViewModel extends ViewModel {
     MutableLiveData<MyCords> selectedCell;
     int selectedRow = 4, selectedCol = 4;
     MutableLiveData<int[][]> mutableSudokuGrid;
-    int[][] sudokuGrid = problem1;
+    int[][] sudokuGrid = problem2;
 
     public MutableLiveData<MyCords> getSelectedCell() {
         if(selectedCell == null) {
@@ -44,10 +45,20 @@ public class MySudokuViewModel extends ViewModel {
     public void updateSelectedCellValue(int newValue){
 
         // If we can NOT put this value in this cell, we return
-        if(!isOk(sudokuGrid, newValue, selectedRow, selectedCol)) return;
+        if(!isOk(sudokuGrid, newValue, selectedRow, selectedCol) && newValue != UNASSIGNED) return;
 
         // Otherwise set the value, and "send" it to the views
         sudokuGrid[selectedRow][selectedCol] = newValue;
+        mutableSudokuGrid.setValue(sudokuGrid);
+    }
+    /* Solves the board */
+    public void solveAndUpdate(){
+        SudokuSolver solver = new SudokuSolver(sudokuGrid);
+
+        long a1 = System.nanoTime();
+        boolean solved = solver.solve();
+        Log.d(TAG, "Time to solve: " + (System.nanoTime() - a1) / 1000 + " micro seconds");
+
         mutableSudokuGrid.setValue(sudokuGrid);
     }
 
