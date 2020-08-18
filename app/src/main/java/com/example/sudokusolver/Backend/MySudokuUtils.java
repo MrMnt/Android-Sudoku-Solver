@@ -14,6 +14,46 @@ public class MySudokuUtils {
     // The size of the cell in pixels
     public static int CELL_SIZE;
 
+    /* Given this number, in that place,
+     * Returns true if it complies with all the
+     * Sudoku rules, otherwise, false		*/
+    public static boolean isOk(int[][] sudokuGrid, int value, int row, int col) {
+
+        if(!isOkInRow(sudokuGrid, value, row)) return false;
+        if(!isOkInCol(sudokuGrid, value, col)) return false;
+        if(!isOkInSection(sudokuGrid, value, row, col)) return false;
+
+        return true;
+    }
+    private static boolean isOkInRow(int[][] sudokuGrid, int value, int row) {
+
+        for(int col = 0; col < SUDOKU_SIZE; col++) {
+            if(sudokuGrid[row][col] == value) return false;
+        }
+        return true; // None other cell in this row had the same value
+    }
+    private static boolean isOkInCol(int[][] sudokuGrid, int value, int col) {
+
+        for(int row = 0; row < SUDOKU_SIZE; row++) {
+            if(sudokuGrid[row][col] == value) return false;
+        }
+        return true; // None other cell in this row had the same value
+    }
+    private static boolean isOkInSection(int[][] sudokuGrid, int value, int row_, int col_) {
+        int startRow = (row_ / SECTION_SIZE) * SECTION_SIZE;
+        int startCol = (col_ / SECTION_SIZE) * SECTION_SIZE;
+
+        int endRow = startRow + SECTION_SIZE;
+        int endCol = startCol + SECTION_SIZE;
+
+        for(int row = startRow; row < endRow; row++) {
+            for(int col = startCol; col < endCol; col++) {
+                if(sudokuGrid[row][col] == value) return false;
+            }
+        }
+        return true; // None other cell in this section had the same value
+    }
+
     /* Returns true, if the cell is in the same row, column or section as the selected cell */
     public static boolean shouldBeHighlighted(int row, int col, int sRow, int sCol){
         if( row == sRow ||                                                       // Same row

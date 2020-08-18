@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -76,9 +77,12 @@ public class ManualSudokuGridView extends View {
         for(int row = 0; row < SUDOKU_SIZE; row++){
             for(int col = 0; col < SUDOKU_SIZE; col++){
 
+                // The distance from the baseline to the center.
+                float height = ((textPaint.descent() + textPaint.ascent()) / 2);
+
                 canvas.drawText(sudokuGrid[row][col] + "",
                         col*CELL_SIZE + CELL_SIZE/2,
-                        (row + 1)*CELL_SIZE - textPaint.getTextSize() / 4,
+                        (row + 1)*CELL_SIZE - CELL_SIZE/2 - height,
                         textPaint);
 
             }

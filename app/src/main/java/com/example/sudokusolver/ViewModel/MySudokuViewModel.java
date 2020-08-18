@@ -14,7 +14,9 @@ public class MySudokuViewModel extends ViewModel {
     private static String TAG = "SudokuSolver";
 
     MutableLiveData<MyCords> selectedCell;
-    MutableLiveData<int[][]> sudokuGrid;
+    int selectedRow = 4, selectedCol = 4;
+    MutableLiveData<int[][]> mutableSudokuGrid;
+    int[][] sudokuGrid = problem1;
 
     public MutableLiveData<MyCords> getSelectedCell() {
         if(selectedCell == null) {
@@ -24,27 +26,29 @@ public class MySudokuViewModel extends ViewModel {
         return selectedCell;
     }
     public MutableLiveData<int[][]> getSudokuGrid(){
-        if(sudokuGrid == null) {
-            sudokuGrid = new MutableLiveData<int[][]>();
+        if(mutableSudokuGrid == null) {
+            mutableSudokuGrid = new MutableLiveData<int[][]>();
             //sudokuGrid.setValue(new int[SUDOKU_SIZE][SUDOKU_SIZE]);
-            sudokuGrid.setValue(problem1);
+            mutableSudokuGrid.setValue(sudokuGrid);
         }
-        return sudokuGrid;
+        return mutableSudokuGrid;
     }
 
     // Updates which is the selected cell
     public void updateSelectedCell(float x, float y){
-        int selectedRow = (int) y / CELL_SIZE;
-        int selectedCol = (int) x / CELL_SIZE;
+        selectedRow = (int) y / CELL_SIZE;
+        selectedCol = (int) x / CELL_SIZE;
         selectedCell.setValue(new MyCords(selectedRow, selectedCol));
     }
     // Updates the selected cells value
     public void updateSelectedCellValue(int newValue){
-        MyCords sCell = selectedCell.getValue();
-        int[][] temp = sudokuGrid.getValue();
-        temp[sCell.getRow()][sCell.getCol()] = newValue;
-        printSudoku(temp);
-        sudokuGrid.setValue(temp);
+
+        // If we can NOT put this value in this cell, we return
+        if(!isOk(sudokuGrid, newValue, selectedRow, selectedCol)) return;
+
+        // Otherwise set the value, and "send" it to the views
+        sudokuGrid[selectedRow][selectedCol] = newValue;
+        mutableSudokuGrid.setValue(sudokuGrid);
     }
 
 }
