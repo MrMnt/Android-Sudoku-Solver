@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,12 +23,13 @@ public class ManualSudokuGridView extends View {
 
     // What to draw, handled by Canvas
     // How to draw, handled by Paint.
-    Paint thinLinePaint, thickLinePaint, selectedCellPaint, highlightedCellPaint;
+    Paint thinLinePaint, thickLinePaint, selectedCellPaint, highlightedCellPaint,
+    textPaint;
 
 
     MyCords selectedCell = new MyCords(4, 4);
     int[][] startingGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
-    int[][] solvedGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
+    int[][] sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
 
     public ManualSudokuGridView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -38,6 +40,7 @@ public class ManualSudokuGridView extends View {
 
         highlightCells(canvas);
         drawGrid(canvas);
+        drawDigits(canvas);
 
         super.onDraw(canvas);
     }
@@ -67,6 +70,22 @@ public class ManualSudokuGridView extends View {
         canvas.drawRect(sCol*CELL_SIZE, sRow*CELL_SIZE, (sCol+1)*CELL_SIZE, (sRow+1)*CELL_SIZE, selectedCellPaint);
     }
 
+    /* Adds the text values to cells in canvas              */
+    private void drawDigits(Canvas canvas){
+
+        for(int row = 0; row < SUDOKU_SIZE; row++){
+            for(int col = 0; col < SUDOKU_SIZE; col++){
+
+                canvas.drawText(sudokuGrid[row][col] + "",
+                        col*CELL_SIZE + CELL_SIZE/2,
+                        (row + 1)*CELL_SIZE - textPaint.getTextSize() / 4,
+                        textPaint);
+
+            }
+        }
+
+    }
+
     /* Responsible for passing the event to the "backend" */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -89,6 +108,10 @@ public class ManualSudokuGridView extends View {
     *  In the main activity, and calls this update function, to redraw the UI    */
     public void updateSelectedCellUI(MyCords selectedCell_){
         selectedCell = selectedCell_;
+        invalidate();
+    }
+    public void updateSudokuGridUI(int[][] sudokuGridSrc){
+        copy2DIntArrays(sudokuGridSrc, sudokuGrid);
         invalidate();
     }
 
@@ -122,6 +145,12 @@ public class ManualSudokuGridView extends View {
         highlightedCellPaint = new Paint();
         highlightedCellPaint.setColor(Color.GRAY);
         highlightedCellPaint.setStyle(Paint.Style.FILL);
+        // Used for any text
+        textPaint = new Paint();
+        textPaint.setColor(Color.BLUE);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setTextSize(32 * getResources().getDisplayMetrics().density);
+        textPaint.setTextAlign(Paint.Align.CENTER);
     }
 
 }

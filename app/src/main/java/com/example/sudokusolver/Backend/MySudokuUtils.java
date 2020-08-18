@@ -1,10 +1,15 @@
 package com.example.sudokusolver.Backend;
 
+import android.util.Log;
+
 public class MySudokuUtils {
+
+    private static String TAG = "SudokuSolver";
 
     // The number of cells in whole sudoku, and sudoku section
     public static final int SUDOKU_SIZE = 9;
     public static final int SECTION_SIZE = 3;
+    public static final int UNASSIGNED = 0;
 
     // The size of the cell in pixels
     public static int CELL_SIZE;
@@ -30,5 +35,35 @@ public class MySudokuUtils {
             }
         }
     }
+
+    public static void printSudoku(int[][] sudokuGrid) {
+
+        String tempString = "\n";
+
+        for(int row = 0; row < 9; row++) {
+
+            for(int col = 0; col < 9; col++) {
+                tempString += sudokuGrid[row][col] + " ";
+                if((col+1) % 3 == 0) tempString += " ";
+            }
+            tempString += ((row+1) % 3 == 0) ? "\n\n" : "\n";
+        }
+
+        Log.d(TAG, "printSudoku: " + tempString);
+
+    }
+
+    public static int[][] problem1 = {
+            { 0, 0, 4,   0, 0, 0,   0, 6, 7 },
+            { 3, 0, 0,   4, 7, 0,   0, 0, 5 },
+            { 1, 5, 0,   8, 2, 0,   0, 0, 3 },
+
+            { 0, 0, 6,   0, 0, 0,   0, 3, 1 },
+            { 8, 0, 2,   1, 0, 5,   6, 0, 4 },
+            { 4, 1, 0,   0, 0, 0,   9, 0, 0 },
+
+            { 7, 0, 0,   0, 8, 0,   0, 4, 6 },
+            { 6, 0, 0,   0, 1, 2,   0, 0, 0 },
+            { 9, 3, 0,   0, 0, 0,   7, 1, 0 } };
 
 }
