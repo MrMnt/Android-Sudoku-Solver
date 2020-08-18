@@ -96,7 +96,7 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
         solveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mySudokuViewModel.solveAndUpdate();
+                mySudokuViewModel.solveAndAnimate();
             }
         });
     }

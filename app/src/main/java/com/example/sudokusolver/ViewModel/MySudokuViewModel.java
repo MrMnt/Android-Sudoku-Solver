@@ -17,7 +17,7 @@ public class MySudokuViewModel extends ViewModel {
     MutableLiveData<MyCords> selectedCell;
     int selectedRow = 4, selectedCol = 4;
     MutableLiveData<int[][]> mutableSudokuGrid;
-    int[][] sudokuGrid = problem2;
+    int[][] sudokuGrid = problem0;
 
     public MutableLiveData<MyCords> getSelectedCell() {
         if(selectedCell == null) {
@@ -29,7 +29,7 @@ public class MySudokuViewModel extends ViewModel {
     public MutableLiveData<int[][]> getSudokuGrid(){
         if(mutableSudokuGrid == null) {
             mutableSudokuGrid = new MutableLiveData<int[][]>();
-            //sudokuGrid.setValue(new int[SUDOKU_SIZE][SUDOKU_SIZE]);
+            sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
             mutableSudokuGrid.setValue(sudokuGrid);
         }
         return mutableSudokuGrid;
@@ -60,6 +60,43 @@ public class MySudokuViewModel extends ViewModel {
         Log.d(TAG, "Time to solve: " + (System.nanoTime() - a1) / 1000 + " micro seconds");
 
         mutableSudokuGrid.setValue(sudokuGrid);
+    }
+
+    public void solveAndAnimate(){
+        final SudokuSolver solver = new SudokuSolver(sudokuGrid);
+
+
+        Runnable obj = new Runnable() {
+            @Override
+            public void run() {
+
+                Runnable obj2 = new Runnable() {
+                    @Override
+                    public void run() {
+                        long a1 = System.nanoTime();
+                        solver.solve();
+                        Log.d(TAG, "Time to solve: " + (System.nanoTime() - a1) / 1000 + " micro seconds");
+                    }
+                };
+
+                Thread t2 = new Thread(obj2);
+                long a1 = System.nanoTime();
+                t2.setPriority(Thread.MAX_PRIORITY);
+                Log.d(TAG, "Setting priority: " + (System.nanoTime() - a1) / 1000 + " micro seconds");
+                t2.start();
+
+                while(t2.isAlive()){
+                    mutableSudokuGrid.postValue(sudokuGrid);
+                }
+
+                mutableSudokuGrid.postValue(sudokuGrid); // To make sure, we have the latest data
+            }
+        };
+
+        // obj starts is a thread, which makes another thread...
+        Thread t1 = new Thread(obj);
+        t1.start();
+
     }
 
 }
