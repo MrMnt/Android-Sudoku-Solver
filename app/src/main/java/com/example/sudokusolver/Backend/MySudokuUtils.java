@@ -23,4 +23,12 @@ public class MySudokuUtils {
         return (row / SECTION_SIZE) * SECTION_SIZE + (col / SECTION_SIZE);
     }
 
+    public static void copy2DIntArrays(int[][] src, int[][] dst) {
+        for(int row = 0; row < SUDOKU_SIZE; row++) {
+            for(int col = 0; col < SUDOKU_SIZE; col++) {
+                dst[row][col] = src[row][col];
+            }
+        }
+    }
+
 }

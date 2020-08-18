@@ -22,7 +22,6 @@ public class MySudokuViewModel extends ViewModel {
     public void updateSelectedCell(float x, float y){
         int selectedRow = (int) y / CELL_SIZE;
         int selectedCol = (int) x / CELL_SIZE;
-        Log.d(TAG, "updateSelectedCell: " + selectedRow + ", " + selectedCol);
         selectedCell.setValue(new MyCords(selectedRow, selectedCol));
     }
 

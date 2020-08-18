@@ -26,6 +26,8 @@ public class ManualSudokuGridView extends View {
 
 
     MyCords selectedCell = new MyCords(4, 4);
+    int[][] startingGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
+    int[][] solvedGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
 
     public ManualSudokuGridView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -56,25 +58,25 @@ public class ManualSudokuGridView extends View {
 
         for(int row = 0; row < SUDOKU_SIZE; row++){
             for(int col = 0; col < SUDOKU_SIZE; col++){
-
                 if( shouldBeHighlighted(row, col, sRow, sCol)){
                     canvas.drawRect(col*CELL_SIZE, row*CELL_SIZE, (col+1)*CELL_SIZE, (row+1)*CELL_SIZE, highlightedCellPaint);
                 }
-
             }
         }
-
+        // Fills the selected cell
         canvas.drawRect(sCol*CELL_SIZE, sRow*CELL_SIZE, (sCol+1)*CELL_SIZE, (sRow+1)*CELL_SIZE, selectedCellPaint);
-
-
     }
 
+    /* Responsible for passing the event to the "backend" */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        handleTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+    private void handleTouchEvent(MotionEvent event){
         if(myCanvasInterfaceListener != null) { // if there is someone listening
             myCanvasInterfaceListener.onTouchEventOccurred(event.getX(), event.getY());
         }
-        return super.onTouchEvent(event);
     }
     myCanvasInterface myCanvasInterfaceListener = null;
     public void setListener(myCanvasInterface listener){
@@ -83,7 +85,8 @@ public class ManualSudokuGridView extends View {
     public interface myCanvasInterface {
         void onTouchEventOccurred(float x, float y);
     }
-
+    /* Once the "backend" has set the LiveData values, it is automatically observed
+    *  In the main activity, and calls this update function, to redraw the UI    */
     public void updateSelectedCellUI(MyCords selectedCell_){
         selectedCell = selectedCell_;
         invalidate();
