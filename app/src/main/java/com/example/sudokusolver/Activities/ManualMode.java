@@ -1,11 +1,15 @@
 package com.example.sudokusolver.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -30,6 +34,7 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
     // Input Buttons, used for giving value to a cell + delete button
     Button[] inputButtons = new Button[SUDOKU_SIZE + 1];
     Button solveBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,5 +104,23 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
                 mySudokuViewModel.solveAndAnimate();
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.solveItem:
+                mySudokuViewModel.solveAndAnimate();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
