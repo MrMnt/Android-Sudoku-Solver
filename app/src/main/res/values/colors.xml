@@ -3,9 +3,13 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 
     <color name="selectedCell_ordinary">#aaaaaa</color>
     <color name="highlightedCell_ordinary">#dddddd</color>
     <color name="text_ordinary">#000000</color>
     <color name="solvedText_ordinary">#00cc00</color>
+    <color name="button_ordinary">#6200EE</color>
+
 </resources>
