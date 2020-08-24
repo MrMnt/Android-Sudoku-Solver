@@ -77,6 +77,9 @@ public class ManualSudokuGridView extends View {
         for(int row = 0; row < SUDOKU_SIZE; row++){
             for(int col = 0; col < SUDOKU_SIZE; col++){
 
+                // If the cell has a value, go to other cell
+                if(sudokuGrid[row][col] == UNASSIGNED) continue;
+
                 // The distance from the baseline to the center.
                 float height = ((textPaint.descent() + textPaint.ascent()) / 2);
 

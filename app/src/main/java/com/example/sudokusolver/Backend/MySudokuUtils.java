@@ -76,23 +76,6 @@ public class MySudokuUtils {
         }
     }
 
-    public static void printSudoku(int[][] sudokuGrid) {
-
-        String tempString = "\n";
-
-        for(int row = 0; row < 9; row++) {
-
-            for(int col = 0; col < 9; col++) {
-                tempString += sudokuGrid[row][col] + " ";
-                if((col+1) % 3 == 0) tempString += " ";
-            }
-            tempString += ((row+1) % 3 == 0) ? "\n\n" : "\n";
-        }
-
-        Log.d(TAG, "printSudoku: " + tempString);
-
-    }
-
     public static int[][] problem0 =
                 {   {3, 0, 6,  5, 0, 8,  4, 0, 0},
                     {5, 2, 0,  0, 0, 0,  0, 0, 0},

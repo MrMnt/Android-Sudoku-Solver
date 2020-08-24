@@ -161,6 +161,7 @@ public class SudokuSolver {
 
         return false;
     }
+
     /* Returns true, if we found an empty cell 			*/
     private boolean findEmptyCell(int[] rowCol) {
 

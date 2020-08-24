@@ -29,7 +29,7 @@ public class MySudokuViewModel extends ViewModel {
     public MutableLiveData<int[][]> getSudokuGrid(){
         if(mutableSudokuGrid == null) {
             mutableSudokuGrid = new MutableLiveData<int[][]>();
-            sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
+            //sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
             mutableSudokuGrid.setValue(sudokuGrid);
         }
         return mutableSudokuGrid;
