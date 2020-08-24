@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.sudokusolver.Backend.MyCords;
+import com.example.sudokusolver.Backend.ExtraClaasses.MyCords;
 import com.example.sudokusolver.Backend.SudokuSolver;
 
 import static com.example.sudokusolver.Backend.MySudokuUtils.*;
@@ -65,7 +65,6 @@ public class MySudokuViewModel extends ViewModel {
     public void solveAndAnimate(){
         final SudokuSolver solver = new SudokuSolver(sudokuGrid);
 
-
         Runnable obj = new Runnable() {
             @Override
             public void run() {
@@ -92,7 +91,6 @@ public class MySudokuViewModel extends ViewModel {
                 mutableSudokuGrid.postValue(sudokuGrid); // To make sure, we have the latest data
             }
         };
-
         // obj starts is a thread, which makes another thread...
         Thread t1 = new Thread(obj);
         t1.start();

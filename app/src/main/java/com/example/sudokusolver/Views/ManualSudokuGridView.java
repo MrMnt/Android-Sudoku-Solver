@@ -1,20 +1,21 @@
 package com.example.sudokusolver.Views;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.example.sudokusolver.Backend.MyCords;
-import com.example.sudokusolver.ViewModel.MySudokuViewModel;
+import com.example.sudokusolver.Backend.ExtraClaasses.MyCords;
+import com.example.sudokusolver.R;
 
 import static com.example.sudokusolver.Backend.MySudokuUtils.*;
 
@@ -24,9 +25,11 @@ public class ManualSudokuGridView extends View {
 
     // What to draw, handled by Canvas
     // How to draw, handled by Paint.
-    Paint thinLinePaint, thickLinePaint, selectedCellPaint, highlightedCellPaint,
-    textPaint;
+    private Paint thinLinePaint, thickLinePaint, selectedCellPaint, highlightedCellPaint,
+            textPaint, solvedTextPaint;
 
+    // For knowing, when to change the colors of the digits
+    private boolean solvingStarted = false;
 
     MyCords selectedCell = new MyCords(4, 4);
     int[][] startingGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
@@ -80,13 +83,18 @@ public class ManualSudokuGridView extends View {
                 // If the cell has a value, go to other cell
                 if(sudokuGrid[row][col] == UNASSIGNED) continue;
 
+                // If the solving has not started, use text paint,
+                // If it has started, check if the digit was there, before the solving
+                Paint thisDigitPaint = (!solvingStarted) ? textPaint :
+                        (startingGrid[row][col] != 0) ? textPaint : solvedTextPaint;
+
                 // The distance from the baseline to the center.
-                float height = ((textPaint.descent() + textPaint.ascent()) / 2);
+                float height = ((thisDigitPaint.descent() + thisDigitPaint.ascent()) / 2);
 
                 canvas.drawText(sudokuGrid[row][col] + "",
                         col*CELL_SIZE + CELL_SIZE/2,
                         (row + 1)*CELL_SIZE - CELL_SIZE/2 - height,
-                        textPaint);
+                        thisDigitPaint);
 
             }
         }
@@ -121,6 +129,13 @@ public class ManualSudokuGridView extends View {
         copy2DIntArrays(sudokuGridSrc, sudokuGrid);
         invalidate();
     }
+    /* Called in another class, just before starting the solve method.
+    *  We use the starting grid, to know, how to draw the digits on the screen,
+    *  After solve, to separate the solved ones, from starting ones         */
+    public void saveStartingGrid(){
+        solvingStarted = true;
+        copy2DIntArrays(sudokuGrid, startingGrid);
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -146,18 +161,25 @@ public class ManualSudokuGridView extends View {
         thickLinePaint.setStrokeWidth(12f);
         // Used for filling the selected cell
         selectedCellPaint = new Paint();
-        selectedCellPaint.setColor(Color.DKGRAY);
+        selectedCellPaint.setColor(getResources().getColor(R.color.selectedCell_ordinary));
         selectedCellPaint.setStyle(Paint.Style.FILL);
         // Used for filling the cells in the same row, column and section as selected cell
         highlightedCellPaint = new Paint();
-        highlightedCellPaint.setColor(Color.GRAY);
+        highlightedCellPaint.setColor(getResources().getColor(R.color.highlightedCell_ordinary));
         highlightedCellPaint.setStyle(Paint.Style.FILL);
         // Used for any text
         textPaint = new Paint();
-        textPaint.setColor(Color.BLUE);
+        textPaint.setColor(getResources().getColor(R.color.text_ordinary));
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextSize(32 * getResources().getDisplayMetrics().density);
         textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        // Used for coloring the solved digits
+        solvedTextPaint = new Paint();
+        solvedTextPaint.setColor(getResources().getColor(R.color.solvedText_ordinary));
+        solvedTextPaint.setStyle(Paint.Style.FILL);
+        solvedTextPaint.setTextSize(32 * getResources().getDisplayMetrics().density);
+        solvedTextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.sudokusolver.Backend;
+package com.example.sudokusolver.Backend.ExtraClaasses;
 
 public class MyCords {
 

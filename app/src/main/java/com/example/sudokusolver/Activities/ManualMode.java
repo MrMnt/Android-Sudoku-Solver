@@ -6,14 +6,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.sudokusolver.Backend.MyCords;
+import com.example.sudokusolver.Backend.ExtraClaasses.MyCords;
 import com.example.sudokusolver.R;
 import com.example.sudokusolver.ViewModel.MySudokuViewModel;
 import com.example.sudokusolver.Views.ManualSudokuGridView;
@@ -101,6 +100,7 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
         solveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myManualSudokuGridView.saveStartingGrid();
                 mySudokuViewModel.solveAndAnimate();
             }
         });
