@@ -29,5 +29,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        findViewById(R.id.cameraModeBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Creates an Intent, from this activity, to the ManualMode activity
+                Intent intent = new Intent(mainActivityContext, CameraMode.class);
+                startActivity(intent);
+            }
+        });
     }
 }
