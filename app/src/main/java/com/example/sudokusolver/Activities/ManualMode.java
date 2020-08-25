@@ -32,7 +32,7 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
 
     // Input Buttons, used for giving value to a cell + delete button
     Button[] inputButtons = new Button[SUDOKU_SIZE + 1];
-    Button solveBtn;
+    Button solveBtn, clearBtn;
 
 
     @Override
@@ -104,6 +104,13 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
                 mySudokuViewModel.solveAndAnimate();
             }
         });
+        clearBtn = findViewById(R.id.clearBtn);
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mySudokuViewModel.setNewBoard();
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,8 +123,11 @@ public class ManualMode extends AppCompatActivity implements ManualSudokuGridVie
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch(item.getItemId()) {
-            case R.id.solveItem:
-                mySudokuViewModel.solveAndAnimate();
+            case R.id.toggleDarkModeItem:
+                // Toggles the dark mode
+                return true;
+            case R.id.openFileItem:
+                // Opens a menu, to choose a sudoku to open
                 return true;
         }
 

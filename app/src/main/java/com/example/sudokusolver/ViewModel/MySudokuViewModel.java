@@ -17,7 +17,7 @@ public class MySudokuViewModel extends ViewModel {
     MutableLiveData<MyCords> selectedCell;
     int selectedRow = 4, selectedCol = 4;
     MutableLiveData<int[][]> mutableSudokuGrid;
-    int[][] sudokuGrid = problem0;
+    int[][] sudokuGrid;
 
     public MutableLiveData<MyCords> getSelectedCell() {
         if(selectedCell == null) {
@@ -29,7 +29,7 @@ public class MySudokuViewModel extends ViewModel {
     public MutableLiveData<int[][]> getSudokuGrid(){
         if(mutableSudokuGrid == null) {
             mutableSudokuGrid = new MutableLiveData<int[][]>();
-            //sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
+            sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
             mutableSudokuGrid.setValue(sudokuGrid);
         }
         return mutableSudokuGrid;
@@ -51,6 +51,11 @@ public class MySudokuViewModel extends ViewModel {
         sudokuGrid[selectedRow][selectedCol] = newValue;
         mutableSudokuGrid.setValue(sudokuGrid);
     }
+    public void setNewBoard(){
+        sudokuGrid = new int[SUDOKU_SIZE][SUDOKU_SIZE];
+        mutableSudokuGrid.setValue(sudokuGrid);
+    }
+
     /* Solves the board */
     public void solveAndUpdate(){
         SudokuSolver solver = new SudokuSolver(sudokuGrid);
