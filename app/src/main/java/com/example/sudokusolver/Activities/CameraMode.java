@@ -3,12 +3,14 @@ package com.example.sudokusolver.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.sudokusolver.Backend.ExtraClaasses.MyImageProcessing;
 import com.example.sudokusolver.Backend.ExtraClaasses.MyTesseractOCR;
@@ -19,6 +21,7 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 public class CameraMode extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
@@ -28,10 +31,13 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
     // For displaying the camera
     JavaCameraView mOpenCvCameraView;
 
+    //For displaying the solved sudoku
+    ImageView myImageView;
+
     MyImageProcessing myImageProcessing;
     MyTesseractOCR myTesseractOCR;
 
-    Button cameraBtn; // For toggling the camera
+    Button cameraBtn, solveBtn; // For toggling the camera and solving
 
     int[][] temp = new int[9][9];
 
@@ -102,12 +108,36 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
             public void onClick(View v) {
                 stopFrames = !stopFrames;
                 if(stopFrames){
+                    mOpenCvCameraView.setVisibility(View.VISIBLE);
+                    myImageView.setVisibility(View.INVISIBLE);
                     new Thread(runObj).start(); // If we want to stop frames, we do this, but only after the last one is processed
                 } else {
+                    mOpenCvCameraView.setVisibility(View.VISIBLE);
                     mOpenCvCameraView.enableView(); // else, we continue the frames
                 }
             }
 
+        });
+
+        myImageView = findViewById(R.id.myImageView);
+        if(myImageView != null) myImageView.setVisibility(View.INVISIBLE); // Since we don't want anything to show at first
+
+        solveBtn = findViewById(R.id.solveBtn);
+        if(solveBtn != null) solveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: show the solved image
+                Mat sudokuImage = myImageProcessing.getsolvedSudokuImage();
+                // convert to bitmap:
+                Bitmap sudokuImageBitmap = Bitmap.createBitmap(sudokuImage.cols(), sudokuImage.rows(),Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(sudokuImage, sudokuImageBitmap);
+
+                if(myImageView != null) {
+                    mOpenCvCameraView.setVisibility(View.INVISIBLE);
+                    myImageView.setVisibility(View.VISIBLE);
+                    myImageView.setImageBitmap(sudokuImageBitmap);
+                }
+            }
         });
     }
 

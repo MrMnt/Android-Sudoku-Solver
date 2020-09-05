@@ -23,6 +23,7 @@ public class MyImageProcessing {
 
     public static int[][] grid;
     public static MyTesseractOCR mOcr;
+    public static Mat lastFrame, lastForwardPerspectiveTransform, lastBackwardPerspectiveTransform;
 
     public MyImageProcessing() {}
     public MyImageProcessing(MyTesseractOCR myTesseractOCR, int[][] sudokuGrid){
@@ -33,6 +34,7 @@ public class MyImageProcessing {
     /* Do ALL the image processing, + OCR + solving */
     public static Mat getFinalImage(CameraBridgeViewBase.CvCameraViewFrame inputFrame){
         Mat src = inputFrame.rgba();
+        lastFrame = src.clone();
 
         List<Point> sudokuCornerPoints = getSudokuCornerPoints(src);
 
@@ -61,6 +63,8 @@ public class MyImageProcessing {
         Mat forwardPerspectiveTransform = getPerspectiveTransform(cornerPoints, warpedImageSize, true);
         Mat backwardPerspectiveTransform = getPerspectiveTransform(cornerPoints, warpedImageSize, false);
 
+        lastForwardPerspectiveTransform = forwardPerspectiveTransform.clone(); lastBackwardPerspectiveTransform = backwardPerspectiveTransform.clone();
+
         Imgproc.warpPerspective(src, forwardPerspective, forwardPerspectiveTransform, warpedImageSize);
 
         doOcrOnWarpedImage(forwardPerspective);
@@ -70,6 +74,24 @@ public class MyImageProcessing {
         Imgproc.warpPerspective(forwardPerspective, backwardPerspective, backwardPerspectiveTransform, src.size());
 
         return backwardPerspective;
+    }
+
+    public static Mat getsolvedSudokuImage(){
+        // For storing the warped out image
+        Mat forwardPerspective = new Mat();
+        // For storing the warped out image, putted back into (source image sized) image
+        Mat backwardPerspective = new Mat();
+
+        Size warpedImageSize = new Size(720, 720);
+        Imgproc.warpPerspective(lastFrame, forwardPerspective, lastForwardPerspectiveTransform, warpedImageSize);
+
+        forwardPerspective = getPaintedSolvedImage(forwardPerspective);
+
+        Imgproc.warpPerspective(forwardPerspective, backwardPerspective, lastBackwardPerspectiveTransform, lastFrame.size());
+
+        Mat finalImage = addTwoImages(lastFrame, backwardPerspective);
+
+        return finalImage;
     }
 
     public static void doOcrOnWarpedImage(Mat src){
@@ -135,13 +157,23 @@ public class MyImageProcessing {
             }
         }
 
+        return dst;
+    }
+
+    /* Get the transformed rectangular image, with JUST the solved digits */
+    public static Mat getPaintedSolvedImage(Mat srcImage) {
+
+        Mat dst = srcImage.clone();
+        int fullSize = dst.width();
+        int gapSize = (fullSize / 9);
+        int cellPadding = gapSize/3;
+
         int[][] tempGrid = new int[9][9];
         MySudokuUtils.copy2DIntArrays(grid, tempGrid);
         SudokuSolver solver = new SudokuSolver(tempGrid);
         boolean solved = solver.solve();
 
         if (solved) {
-            cellPadding = gapSize / 3;
             for(int row = 0; row < 9; row++){
                 for(int col = 0; col < 9; col++){
 //                Imgproc.putText(dst, ""+((row*9+col)+1), new Point((row*gapSize) + cellPadding, ((col+1)*gapSize) - cellPadding),
