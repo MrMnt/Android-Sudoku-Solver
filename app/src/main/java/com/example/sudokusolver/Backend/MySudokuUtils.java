@@ -6,6 +6,12 @@ public class MySudokuUtils {
 
     private static String TAG = "SudokuSolver";
 
+    // For the permissions, we use them as request codes
+    public static final int REQUEST_CAMERA_AND_MEMORY = 111;
+    public static final int REQUEST_MEMORY = 112;
+    public static final int SAVE_OPTION = 1000;
+    public static final int LOAD_OPTION = 999;
+
     // The number of cells in whole sudoku, and sudoku section
     public static final int SUDOKU_SIZE = 9;
     public static final int SECTION_SIZE = 3;
