@@ -2,6 +2,9 @@ package com.example.sudokusolver.Backend.ExtraClaasses;
 
 import android.graphics.Bitmap;
 
+import com.example.sudokusolver.Backend.MySudokuUtils;
+import com.example.sudokusolver.Backend.SudokuSolver;
+
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -119,7 +122,7 @@ public class MyImageProcessing {
         Mat dst = srcImage.clone();
         int fullSize = dst.width();
         int gapSize = (fullSize / 9);
-        int cellPadding = gapSize/4;
+        int cellPadding = gapSize/5;
 
         for(int row = 0; row < 9; row++){
             for(int col = 0; col < 9; col++){
@@ -129,6 +132,25 @@ public class MyImageProcessing {
 
                 Imgproc.putText(dst, "" + grid[row][col], new Point((col * gapSize) + cellPadding, ((row+1)*gapSize) - cellPadding),
                         Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(0, 255, 0), 2);
+            }
+        }
+
+        int[][] tempGrid = new int[9][9];
+        MySudokuUtils.copy2DIntArrays(grid, tempGrid);
+        SudokuSolver solver = new SudokuSolver(tempGrid);
+        boolean solved = solver.solve();
+
+        if (solved) {
+            cellPadding = gapSize / 3;
+            for(int row = 0; row < 9; row++){
+                for(int col = 0; col < 9; col++){
+//                Imgproc.putText(dst, ""+((row*9+col)+1), new Point((row*gapSize) + cellPadding, ((col+1)*gapSize) - cellPadding),
+//                        Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(0, 255, 0));
+                    if(grid[row][col] != 0) continue;
+
+                    Imgproc.putText(dst, "" + tempGrid[row][col], new Point((col * gapSize) + cellPadding, ((row+1)*gapSize) - cellPadding),
+                            Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(0, 255, 0), 2);
+                }
             }
         }
 

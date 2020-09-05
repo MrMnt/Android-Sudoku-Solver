@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.example.sudokusolver.Backend.ExtraClaasses.MyImageProcessing;
 import com.example.sudokusolver.Backend.ExtraClaasses.MyTesseractOCR;
@@ -30,7 +31,13 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
     MyImageProcessing myImageProcessing;
     MyTesseractOCR myTesseractOCR;
 
+    Button cameraBtn; // For toggling the camera
+
     int[][] temp = new int[9][9];
+
+    boolean stopFrames = false; // If this is true, we stop the frames form coming
+    boolean frameProcessed = false; // If this is false, the frame is still being processed
+    Runnable runObj; // used for running another thread, to check if the frame has finished being processed
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +51,32 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        return myImageProcessing.getFinalImage(inputFrame);
-        //return inputFrame.rgba();
+        if(stopFrames){
+            Mat finalImage = myImageProcessing.getFinalImage(inputFrame);
+            frameProcessed = true;
+            return finalImage;
+        }
+
+        return inputFrame.rgba();
     }
 
     private void initializeProcessing(){
         myTesseractOCR = new MyTesseractOCR(CameraMode.this, "eng");
         myImageProcessing = new MyImageProcessing(myTesseractOCR, temp);
+
+        runObj = new Runnable() {
+            @Override
+            public void run() {
+                // While the frame is still being processed, lets wait
+                while(frameProcessed == false){
+                    try { Thread.sleep(10); } catch (Exception e) {}
+                }
+                // Once the frame has finished being processed, we "close" the camera
+                mOpenCvCameraView.disableView();
+                // And set the frameProcessed to false, to prepare for the next time
+                frameProcessed = false;
+            }
+        };
     }
 
     private void initializeCamera(){
@@ -69,6 +95,20 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
         //permanent full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        cameraBtn = findViewById(R.id.cameraBtn);
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopFrames = !stopFrames;
+                if(stopFrames){
+                    new Thread(runObj).start(); // If we want to stop frames, we do this, but only after the last one is processed
+                } else {
+                    mOpenCvCameraView.enableView(); // else, we continue the frames
+                }
+            }
+
+        });
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
