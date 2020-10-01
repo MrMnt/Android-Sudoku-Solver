@@ -85,7 +85,12 @@ public class MyImageProcessing {
         Size warpedImageSize = new Size(720, 720);
         Imgproc.warpPerspective(lastFrame, forwardPerspective, lastForwardPerspectiveTransform, warpedImageSize);
 
+
         forwardPerspective = getPaintedSolvedImage(forwardPerspective);
+
+        // zdec
+        Bitmap temp2 = Bitmap.createBitmap((int) warpedImageSize.width, (int) warpedImageSize.height,Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(forwardPerspective, temp2);
 
         Imgproc.warpPerspective(forwardPerspective, backwardPerspective, lastBackwardPerspectiveTransform, lastFrame.size());
 
@@ -176,14 +181,21 @@ public class MyImageProcessing {
         if (solved) {
             for(int row = 0; row < 9; row++){
                 for(int col = 0; col < 9; col++){
-//                Imgproc.putText(dst, ""+((row*9+col)+1), new Point((row*gapSize) + cellPadding, ((col+1)*gapSize) - cellPadding),
-//                        Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(0, 255, 0));
+
                     if(grid[row][col] != 0) continue;
 
                     Imgproc.putText(dst, "" + tempGrid[row][col], new Point((col * gapSize) + cellPadding, ((row+1)*gapSize) - cellPadding),
                             Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(0, 255, 0), 2);
+
+                    Bitmap test1 = Bitmap.createBitmap(dst.width(), dst.height(), Bitmap.Config.ARGB_8888);
+                    Utils.matToBitmap(dst, test1);
+
+                    int a = 0;
                 }
             }
+        } else {
+            Imgproc.putText(dst, "PLEASE RETAKE THE IMAGE", new Point(gapSize*4, gapSize*4),
+                    Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, gapSize*3), new Scalar(255, 0, 0), 4);
         }
 
         return dst;

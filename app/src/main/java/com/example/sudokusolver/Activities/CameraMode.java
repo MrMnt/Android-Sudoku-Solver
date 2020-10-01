@@ -113,6 +113,7 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
                     new Thread(runObj).start(); // If we want to stop frames, we do this, but only after the last one is processed
                 } else {
                     mOpenCvCameraView.setVisibility(View.VISIBLE);
+                    myImageView.setVisibility(View.INVISIBLE);
                     mOpenCvCameraView.enableView(); // else, we continue the frames
                 }
             }
