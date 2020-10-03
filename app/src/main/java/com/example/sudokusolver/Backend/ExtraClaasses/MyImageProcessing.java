@@ -23,6 +23,7 @@ public class MyImageProcessing {
 
     public static int[][] grid;
     public static MyTesseractOCR mOcr;
+    // Used for, when we want to show the solved image
     public static Mat lastFrame, lastForwardPerspectiveTransform, lastBackwardPerspectiveTransform;
 
     public MyImageProcessing() {}
@@ -85,16 +86,15 @@ public class MyImageProcessing {
         Size warpedImageSize = new Size(720, 720);
         Imgproc.warpPerspective(lastFrame, forwardPerspective, lastForwardPerspectiveTransform, warpedImageSize);
 
-
         forwardPerspective = getPaintedSolvedImage(forwardPerspective);
-
-        // zdec
-        Bitmap temp2 = Bitmap.createBitmap((int) warpedImageSize.width, (int) warpedImageSize.height,Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(forwardPerspective, temp2);
 
         Imgproc.warpPerspective(forwardPerspective, backwardPerspective, lastBackwardPerspectiveTransform, lastFrame.size());
 
         Mat finalImage = addTwoImages(lastFrame, backwardPerspective);
+
+        Imgproc.cvtColor(finalImage, finalImage, Imgproc.COLOR_RGBA2RGB);
+        Bitmap test1 = Bitmap.createBitmap(finalImage.width(), finalImage.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(finalImage, test1);
 
         return finalImage;
     }
@@ -169,6 +169,8 @@ public class MyImageProcessing {
     public static Mat getPaintedSolvedImage(Mat srcImage) {
 
         Mat dst = srcImage.clone();
+        Bitmap test11 = Bitmap.createBitmap(dst.width(), dst.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(dst, test11);
         int fullSize = dst.width();
         int gapSize = (fullSize / 9);
         int cellPadding = gapSize/3;
@@ -185,12 +187,7 @@ public class MyImageProcessing {
                     if(grid[row][col] != 0) continue;
 
                     Imgproc.putText(dst, "" + tempGrid[row][col], new Point((col * gapSize) + cellPadding, ((row+1)*gapSize) - cellPadding),
-                            Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(0, 255, 0), 2);
-
-                    Bitmap test1 = Bitmap.createBitmap(dst.width(), dst.height(), Bitmap.Config.ARGB_8888);
-                    Utils.matToBitmap(dst, test1);
-
-                    int a = 0;
+                            Imgproc.FONT_HERSHEY_PLAIN, Imgproc.getFontScaleFromHeight(Imgproc.FONT_HERSHEY_PLAIN, cellPadding), new Scalar(255, 255, 255), 2);
                 }
             }
         } else {
@@ -202,3 +199,6 @@ public class MyImageProcessing {
     }
 
 }
+
+//    Bitmap test = Bitmap.createBitmap(src.width(), src.height(), Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(src, test);

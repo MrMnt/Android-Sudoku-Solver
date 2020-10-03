@@ -14,6 +14,8 @@ import android.widget.ImageView;
 
 import com.example.sudokusolver.Backend.ExtraClaasses.MyImageProcessing;
 import com.example.sudokusolver.Backend.ExtraClaasses.MyTesseractOCR;
+import com.example.sudokusolver.Backend.MySudokuUtils;
+import com.example.sudokusolver.Backend.SudokuSolver;
 import com.example.sudokusolver.R;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -23,6 +25,9 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 public class CameraMode extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -62,7 +67,6 @@ public class CameraMode extends AppCompatActivity implements CameraBridgeViewBas
             frameProcessed = true;
             return finalImage;
         }
-
         return inputFrame.rgba();
     }
 
