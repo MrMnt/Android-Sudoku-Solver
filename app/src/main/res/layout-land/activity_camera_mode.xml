@@ -8,13 +8,13 @@
 
     <org.opencv.android.JavaCameraView
         android:id="@+id/myCameraView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:show_fps="true"/>
+        app:show_fps="false" />
 
     <Button
         android:id="@+id/cameraBtn"
